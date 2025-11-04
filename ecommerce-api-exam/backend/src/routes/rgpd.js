@@ -1,9 +1,10 @@
 const express = require('express');
-const { consent, deleteAccount } = require('../controllers/rgpdController');
-const { authRequired } = require('../middlewares/auth');
 const router = express.Router();
+const { authRequired } = require('../middlewares/auth');
+const ctl = require('../controllers/rgpdController');
 
-router.post('/consent', authRequired, consent);
-router.delete('/account', authRequired, deleteAccount);
+router.get('/consent', authRequired, ctl.getConsent);
+router.post('/consent', authRequired, ctl.setConsent);
+router.delete('/account', authRequired, ctl.deleteAccount);
 
 module.exports = router;
