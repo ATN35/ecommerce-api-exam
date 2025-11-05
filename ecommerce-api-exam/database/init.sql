@@ -1,4 +1,3 @@
--- PostgreSQL init schema for e-commerce API
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS users (
@@ -47,8 +46,6 @@ ALTER TABLE orders
   ADD CONSTRAINT orders_user_id_fkey
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
-
--- seed a default admin (password: admin123) and some products
 INSERT INTO users (email, password_hash, role, cookie_consent)
 VALUES ('admin@local.test', '$2b$10$9j8r7u9qJQ7T1XU0o3cS3eT4gVY2b4.Zm8dOqRWkG0w3w3Y7X1b2e', 'admin', TRUE)
 ON CONFLICT (email) DO NOTHING;
