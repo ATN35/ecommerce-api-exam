@@ -16,6 +16,7 @@ app.use('/api/cart', require('./routes/cart'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/health', require('./routes/health'));
 app.use('/api/rgpd', require('./routes/rgpd'));
+app.use('/api/cookie', require('./routes/cookie'))
 app.use('/api', require('./routes/admin'));
 
 app.get('/', (_req, res) => res.json({ name: 'ecommerce-api', version: '1.0.0' }));
