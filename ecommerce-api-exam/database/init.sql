@@ -37,6 +37,17 @@ CREATE TABLE IF NOT EXISTS order_items (
   unit_price_cents INTEGER NOT NULL CHECK (unit_price_cents >= 0)
 );
 
+ALTER TABLE IF EXISTS order_items DROP CONSTRAINT IF EXISTS order_items_order_id_fkey;
+ALTER TABLE order_items
+  ADD CONSTRAINT order_items_order_id_fkey
+  FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE;
+
+ALTER TABLE IF EXISTS orders DROP CONSTRAINT IF EXISTS orders_user_id_fkey;
+ALTER TABLE orders
+  ADD CONSTRAINT orders_user_id_fkey
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+
 -- seed a default admin (password: admin123) and some products
 INSERT INTO users (email, password_hash, role, cookie_consent)
 VALUES ('admin@local.test', '$2b$10$9j8r7u9qJQ7T1XU0o3cS3eT4gVY2b4.Zm8dOqRWkG0w3w3Y7X1b2e', 'admin', TRUE)
