@@ -5,7 +5,6 @@ const { pool } = require('./config/db');
 const port = process.env.PORT || 8080;
 
 async function start() {
-  // Test DB before starting
   await pool.query('SELECT 1');
   await initRedis();
   app.listen(port, () => console.log(`API running on http://0.0.0.0:${port}`));
