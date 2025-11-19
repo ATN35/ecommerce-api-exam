@@ -8,7 +8,6 @@ const cookieRoutes = require('./routes/cookie')
 
 const app = express();
 app.use(express.json());
-security(app);
 
 app.use('/api', require('./routes/admin'));
 app.use('/api/auth', require('./routes/auth'));
