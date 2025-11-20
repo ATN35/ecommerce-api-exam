@@ -1,100 +1,124 @@
-# ============================================
-# Makefile – E-commerce API (Express + Postgres + Redis)
-# Repo : ecommerce-api-exam
-# ============================================
+# ============================================================
+#  Makefile – E-commerce API (Express.js + PostgreSQL + Redis)
+# ============================================================
+#
+#  Repo : ecommerce-api-exam
+#
+#  Backend :
+#    - Node.js / Express
+#    - PostgreSQL + Redis (docker-compose)
+#    - Auth JWT (user/admin), Bcrypt, Helmet, CORS
+#    - Panier dans Redis, commandes, RGPD (consentement / delete)
+#    - Endpoints de santé : /api/health, /api/health/db, /api/health/redis
+#
+#  Ce Makefile sert de “mini README” :
+#    - `make help`   : affiche les commandes disponibles
+#    - `make init`   : prépare le fichier .env
+#    - `make build`  : build des images Docker
+#    - `make up`     : lance la stack en détaché
+#    - `make down`   : arrête et supprime les conteneurs
+#    - `make logs`   : suit les logs de l’API
+#    - `make health` : ping des endpoints de santé
+#    - `make deploy` : push sur main (déclenche GitHub Actions)
+#
+# ============================================================
 
-PROJECT_NAME := ecommerce-api-exam
-COMPOSE      := docker compose
-ENV_FILE     := .env
+# ----- Configuration locale --------------------------------------------------
 
-VPS_HOST     := 51.91.9.200
-VPS_USER     := ubuntu
-SSH          := ssh $(VPS_USER)@$(VPS_HOST)
+# Dossier du projet contenant docker-compose.yml
+PROJECT_DIR      := ecommerce-api-exam
 
-# --------------------------------------------
-# Aide
-# --------------------------------------------
+# Fichiers d'environnement
+ENV_EXAMPLE      := $(PROJECT_DIR)/.env.example
+ENV_FILE         := $(PROJECT_DIR)/.env
+
+# Commande docker compose
+COMPOSE          := docker compose -f $(PROJECT_DIR)/docker-compose.yml
+
+# Branche principale pour le déploiement
+BRANCH           := main
+
+# -----------------------------------------------------------------------------
+
+
+# Cible par défaut : affiche l'aide
 .PHONY: help
 help:
 	@echo ""
-	@echo "Commandes disponibles :"
-	@echo "  make init        - Copier .env.example vers .env si .env n'existe pas"
-	@echo "  make build       - Construire l'image Docker de l'API"
-	@echo "  make up          - Lancer l'API + Postgres + Redis en arrière-plan"
-	@echo "  make down        - Arrêter et supprimer les conteneurs"
-	@echo "  make restart     - Redémarrer proprement les conteneurs"
-	@echo "  make ps          - Lister les conteneurs du projet"
-	@echo "  make logs        - Voir les logs de l'API"
-	@echo "  make logs-all    - Voir les logs de tous les services"
-	@echo "  make seed        - Exécuter le script de seed (création admin, données de test)"
-	@echo "  make health      - Tester l'endpoint /api/health en local"
-	@echo "  make deploy      - git push sur main (déclenche GitHub Actions -> VPS)"
+	@echo "Commandes Make disponibles :"
+	@echo "  make help      - Afficher cette aide"
+	@echo "  make init      - Créer .env à partir de .env.example si nécessaire"
+	@echo "  make build     - Builder les images Docker (API, Postgres, Redis)"
+	@echo "  make up        - Démarrer la stack en arrière-plan"
+	@echo "  make down      - Arrêter et nettoyer les conteneurs"
+	@echo "  make logs      - Voir les logs de l'API"
+	@echo "  make ps        - Lister les conteneurs du projet"
+	@echo "  make health    - Tester les endpoints /api/health*"
+	@echo "  make deploy    - Git add/commit/push sur la branche '$(BRANCH)'"
 	@echo ""
 
-# --------------------------------------------
-# Initialisation
-# --------------------------------------------
+
+# ----- Initialisation --------------------------------------------------------
+
 .PHONY: init
 init:
-	@if [ ! -f $(ENV_FILE) ]; then \
-		cp .env.example $(ENV_FILE); \
-		echo "[OK] .env créé à partir de .env.example"; \
+	@if [ ! -f "$(ENV_FILE)" ]; then \
+	  echo "[init] $(ENV_FILE) manquant, copie depuis $(ENV_EXAMPLE)"; \
+	  cp "$(ENV_EXAMPLE)" "$(ENV_FILE)"; \
 	else \
-		echo "[INFO] .env existe déjà, rien à faire."; \
+	  echo "[init] $(ENV_FILE) existe déjà, rien à faire."; \
 	fi
 
-# --------------------------------------------
-# Docker (local ou VPS, selon où tu lances make)
-# --------------------------------------------
+
+# ----- Docker : build / up / down / logs / ps --------------------------------
+
 .PHONY: build
 build:
-	$(COMPOSE) build
+	@echo "[docker] Build des images…"
+	@$(COMPOSE) build
 
 .PHONY: up
 up:
-	$(COMPOSE) up -d
+	@echo "[docker] Démarrage de la stack…"
+	@$(COMPOSE) up -d
 
 .PHONY: down
 down:
-	$(COMPOSE) down
-
-.PHONY: restart
-restart: down up
-
-.PHONY: ps
-ps:
-	$(COMPOSE) ps
+	@echo "[docker] Arrêt et nettoyage…"
+	@$(COMPOSE) down
 
 .PHONY: logs
 logs:
-	$(COMPOSE) logs -f api
+	@echo "[docker] Logs de l'API (Ctrl+C pour quitter)…"
+	@$(COMPOSE) logs -f api
 
-.PHONY: logs-all
-logs-all:
-	$(COMPOSE) logs -f
+.PHONY: ps
+ps:
+	@$(COMPOSE) ps
 
-# --------------------------------------------
-# Seed & tests simples
-# --------------------------------------------
-.PHONY: seed
-seed:
-	$(COMPOSE) exec api node backend/src/seed.js
+
+# ----- Santé de l'API --------------------------------------------------------
 
 .PHONY: health
 health:
-	@echo "Test http://localhost:8080/api/health"
-	@curl -s -o /dev/null -w "Code HTTP: %{http_code}\n" http://localhost:8080/api/health || echo "Échec de la requête"
+	@echo "[health] /api/health"
+	@curl -sS http://localhost:8080/api/health || true
+	@echo "\n[health] /api/health/db"
+	@curl -sS http://localhost:8080/api/health/db || true
+	@echo "\n[health] /api/health/redis"
+	@curl -sS http://localhost:8080/api/health/redis || true
+	@echo ""
 
-# --------------------------------------------
-# Déploiement via GitHub Actions
-# --------------------------------------------
+
+# ----- Déploiement (Git + GitHub Actions) ------------------------------------
+
 .PHONY: deploy
 deploy:
-	@git status
-	@echo ""
-	@echo "==> Commit & push vers main (déclenche le workflow GitHub Actions)…"
+	@echo "[deploy] Ajout des fichiers modifiés…"
 	@git add .
-	@git commit -m "chore: deploy API to VPS" || echo "[INFO] Aucun changement à committer."
-	@git push origin main
-	@echo ""
-	@echo "[OK] Push envoyé. GitHub Actions va déployer sur le VPS."
+	@echo "[deploy] Commit (laisse vide pour annuler)…"
+	@git commit -m "chore: update ecommerce api" || true
+	@echo "[deploy] Push sur $(BRANCH)…"
+	@git push origin $(BRANCH)
+	@echo "[deploy] Terminé. GitHub Actions se charge du déploiement sur le VPS."
+
