@@ -1,7 +1,6 @@
 const { pool } = require('../config/db');
 
 async function createOrder(user_id, items) {
-  // items: [{product_id, quantity, unit_price_cents}]
   let total = 0;
   for (const it of items) total += it.quantity * it.unit_price_cents;
 
