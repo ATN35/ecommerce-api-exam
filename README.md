@@ -27,10 +27,15 @@ Réaliser une API professionnelle conforme aux compétences du titre DWWM :
 
 ##  Architecture MVC
 /src
+
 ├── controllers
+
 ├── models
+
 ├── routes
+
 ├── middlewares
+
 └── utils
 
 ---
