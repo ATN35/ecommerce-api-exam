@@ -95,6 +95,6 @@ Une API e-commerce **sécurisée, modulaire, documentée et déployée**, prête
 
 ---
 
-##  Auteur
+###  Auteur
 **Antoine Lelièvre** – Développeur Web & Web Mobile  
 
