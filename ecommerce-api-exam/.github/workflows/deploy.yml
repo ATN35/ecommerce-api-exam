@@ -13,25 +13,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Copy project to VPS
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          source: "."
-          target: "/home/ubuntu/apps/ecommerce-api-exam"
-          overwrite: true
+      - name: Configure SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ci_ovh
+          chmod 600 ~/.ssh/id_ci_ovh
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Copy project to VPS with rsync
+        run: |
+          rsync -az --delete -e "ssh -i ~/.ssh/id_ci_ovh -o StrictHostKeyChecking=yes" ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/ubuntu/apps/ecommerce-api-exam
 
       - name: SSH into VPS and deploy
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
+        run: |
+          ssh -i ~/.ssh/id_ci_ovh -o StrictHostKeyChecking=yes ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
             cd /home/ubuntu/apps/ecommerce-api-exam
-            docker compose down
+            docker compose down || true
             docker compose build --no-cache
             docker compose up -d
-            sudo systemctl reload nginx
+            sudo systemctl reload nginx || true
+          EOF
