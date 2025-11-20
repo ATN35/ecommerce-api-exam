@@ -1,9 +1,9 @@
-# ��� API e-Commerce – Projet d’Examen DWWM
+#  API e-Commerce – Projet d’Examen DWWM
 API sécurisée permettant la gestion complète d’un système e-commerce : utilisateurs, administrateurs, produits, commandes, authentification, base de données persistante et déploiement VPS via Docker & Nginx.
 
 ---
 
-## ��� Objectif du projet
+##  Objectif du projet
 Réaliser une API professionnelle conforme aux compétences du titre DWWM :
 - Backend structuré avec architecture MVC  
 - Authentification sécurisée (JWT, Bcrypt)  
@@ -15,7 +15,7 @@ Réaliser une API professionnelle conforme aux compétences du titre DWWM :
 
 ---
 
-## ��� Stack Technique
+##  Stack Technique
 - **Node.js / Express.js**
 - **PostgreSQL** (volume Docker persistant)
 - **JWT, Bcrypt, CORS, Helmet**
@@ -25,7 +25,7 @@ Réaliser une API professionnelle conforme aux compétences du titre DWWM :
 
 ---
 
-## ��� Architecture MVC
+##  Architecture MVC
 /src
 ├── controllers
 ├── models
@@ -35,7 +35,7 @@ Réaliser une API professionnelle conforme aux compétences du titre DWWM :
 
 ---
 
-## ���️ Étapes de création du projet
+##  Étapes de création du projet
 
 ### 1️⃣ Initialisation du backend
 - Création d’un projet Express propre  
@@ -90,6 +90,6 @@ Une API e-commerce **sécurisée, modulaire, documentée et déployée**, prête
 
 ---
 
-## ��� Auteur
+##  Auteur
 **Antoine Lelièvre** – Développeur Web & Web Mobile  
 
