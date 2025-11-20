@@ -1,124 +1,126 @@
-# ============================================================
-#  Makefile ‚Äì E-commerce API (Express.js + PostgreSQL + Redis)
-# ============================================================
-#
-#  Repo : ecommerce-api-exam
-#
-#  Backend :
-#    - Node.js / Express
-#    - PostgreSQL + Redis (docker-compose)
-#    - Auth JWT (user/admin), Bcrypt, Helmet, CORS
-#    - Panier dans Redis, commandes, RGPD (consentement / delete)
-#    - Endpoints de sant√© : /api/health, /api/health/db, /api/health/redis
-#
-#  Ce Makefile sert de ‚Äúmini README‚Äù :
-#    - `make help`   : affiche les commandes disponibles
-#    - `make init`   : pr√©pare le fichier .env
-#    - `make build`  : build des images Docker
-#    - `make up`     : lance la stack en d√©tach√©
-#    - `make down`   : arr√™te et supprime les conteneurs
-#    - `make logs`   : suit les logs de l‚ÄôAPI
-#    - `make health` : ping des endpoints de sant√©
-#    - `make deploy` : push sur main (d√©clenche GitHub Actions)
-#
-# ============================================================
+###############################################################
+#                                                             #
+#     Ì∫Ä E-commerce API ‚Äî Express.js + PostgreSQL + Redis     #
+#     Ì≥¶ D√©ploiement Docker + GitHub Actions + VPS OVH        #
+#                                                             #
+###############################################################
 
-# ----- Configuration locale --------------------------------------------------
+# === COULEURS TERMINAL ===
+YELLOW  = \033[1;33m
+GREEN   = \033[1;32m
+CYAN    = \033[1;36m
+BLUE    = \033[1;34m
+RESET   = \033[0m
 
-# Dossier du projet contenant docker-compose.yml
-PROJECT_DIR      := ecommerce-api-exam
+# === VARIABLES ==================================================
+PROJECT      = ecommerce-api-exam
+COMPOSE      = docker compose
+ENV_FILE     = .env
+VPS_HOST     = 51.91.9.200
+VPS_USER     = ubuntu
+VPS_PATH     = /home/ubuntu/apps/$(PROJECT)
 
-# Fichiers d'environnement
-ENV_EXAMPLE      := $(PROJECT_DIR)/.env.example
-ENV_FILE         := $(PROJECT_DIR)/.env
-
-# Commande docker compose
-COMPOSE          := docker compose -f $(PROJECT_DIR)/docker-compose.yml
-
-# Branche principale pour le d√©ploiement
-BRANCH           := main
-
-# -----------------------------------------------------------------------------
+default: help
 
 
-# Cible par d√©faut : affiche l'aide
-.PHONY: help
+###############################################################
+# ÔøΩÔøΩ AIDE ‚Äî DOCUMENTATION / README
+###############################################################
 help:
 	@echo ""
-	@echo "Commandes Make disponibles :"
-	@echo "  make help      - Afficher cette aide"
-	@echo "  make init      - Cr√©er .env √† partir de .env.example si n√©cessaire"
-	@echo "  make build     - Builder les images Docker (API, Postgres, Redis)"
-	@echo "  make up        - D√©marrer la stack en arri√®re-plan"
-	@echo "  make down      - Arr√™ter et nettoyer les conteneurs"
-	@echo "  make logs      - Voir les logs de l'API"
-	@echo "  make ps        - Lister les conteneurs du projet"
-	@echo "  make health    - Tester les endpoints /api/health*"
-	@echo "  make deploy    - Git add/commit/push sur la branche '$(BRANCH)'"
+	@echo "$(CYAN)============== Ìºê  E-COMMERCE API ‚Äî README ============== $(RESET)"
+	@echo ""
+	@echo "$(GREEN)Ì≥å Technologies utilis√©es :$(RESET)"
+	@echo "  - Node.js + Express"
+	@echo "  - PostgreSQL (persistant)"
+	@echo "  - Redis (panier TTL)"
+	@echo "  - JWT, Bcrypt, CORS, Helmet"
+	@echo "  - Docker & docker-compose"
+	@echo "  - GitHub Actions (d√©ploiement CI/CD)"
+	@echo "  - VPS OVH"
+	@echo ""
+	@echo "$(GREEN)Ì≥¶ Fonctionnalit√©s API :$(RESET)"
+	@echo "  - Authentification (register/login), JWT + cookie HttpOnly"
+	@echo "  - Produits : CRUD admin + consultation publique"
+	@echo "  - Panier avec Redis"
+	@echo "  - Commandes : cr√©ation + d√©cr√©ment stock"
+	@echo "  - Routes sant√© : /api/health, /db, /redis"
+	@echo "  - RGPD : consentement + suppression de compte"
+	@echo ""
+	@echo "$(GREEN)Ìª†Ô∏è Commandes Makefile disponibles :$(RESET)"
+	@echo ""
+	@echo "$(YELLOW)  make init         $(RESET)‚Üí initialise .env si absent"
+	@echo "$(YELLOW)  make build        $(RESET)‚Üí build des conteneurs Docker"
+	@echo "$(YELLOW)  make up           $(RESET)‚Üí lance l‚Äôenvironnement (detached)"
+	@echo "$(YELLOW)  make logs         $(RESET)‚Üí affiche les logs live"
+	@echo "$(YELLOW)  make down        $(RESET)‚Üí stop + supprime conteneurs"
+	@echo "$(YELLOW)  make restart     $(RESET)‚Üí restart complet"
+	@echo "$(YELLOW)  make test-api    $(RESET)‚Üí test /api/health"
+	@echo ""
+	@echo "$(BLUE)  make deploy      $(RESET)‚Üí push GitHub ‚Üí d√©ploiement automatique"
+	@echo ""
+	@echo "$(CYAN)==========================================================$(RESET)"
 	@echo ""
 
 
-# ----- Initialisation --------------------------------------------------------
-
-.PHONY: init
+###############################################################
+# Ì¥ß INITIALISATION
+###############################################################
 init:
-	@if [ ! -f "$(ENV_FILE)" ]; then \
-	  echo "[init] $(ENV_FILE) manquant, copie depuis $(ENV_EXAMPLE)"; \
-	  cp "$(ENV_EXAMPLE)" "$(ENV_FILE)"; \
+	@if [ ! -f $(ENV_FILE) ]; then \
+		echo "$(YELLOW)[INIT]$(RESET) Cr√©ation du fichier .env..."; \
+		cp .env.example .env; \
 	else \
-	  echo "[init] $(ENV_FILE) existe d√©j√†, rien √† faire."; \
+		echo "$(GREEN)[OK]$(RESET) Fichier .env d√©j√† existant."; \
 	fi
 
 
-# ----- Docker : build / up / down / logs / ps --------------------------------
-
-.PHONY: build
+###############################################################
+# Ì∞≥ DOCKER ‚Äî LOCAL DEV
+###############################################################
 build:
-	@echo "[docker] Build des images‚Ä¶"
-	@$(COMPOSE) build
+	@echo "$(BLUE)[BUILD]$(RESET) Construction backend..."
+	$(COMPOSE) build
 
-.PHONY: up
 up:
-	@echo "[docker] D√©marrage de la stack‚Ä¶"
-	@$(COMPOSE) up -d
+	@echo "$(GREEN)[UP]$(RESET) Lancement des services..."
+	$(COMPOSE) up -d
 
-.PHONY: down
 down:
-	@echo "[docker] Arr√™t et nettoyage‚Ä¶"
-	@$(COMPOSE) down
+	@echo "$(YELLOW)[DOWN]$(RESET) Extinction des services..."
+	$(COMPOSE) down --remove-orphans
 
-.PHONY: logs
+restart: down up
+
 logs:
-	@echo "[docker] Logs de l'API (Ctrl+C pour quitter)‚Ä¶"
-	@$(COMPOSE) logs -f api
-
-.PHONY: ps
-ps:
-	@$(COMPOSE) ps
+	$(COMPOSE) logs -f
 
 
-# ----- Sant√© de l'API --------------------------------------------------------
-
-.PHONY: health
-health:
-	@echo "[health] /api/health"
-	@curl -sS http://localhost:8080/api/health || true
-	@echo "\n[health] /api/health/db"
-	@curl -sS http://localhost:8080/api/health/db || true
-	@echo "\n[health] /api/health/redis"
-	@curl -sS http://localhost:8080/api/health/redis || true
-	@echo ""
+###############################################################
+# Ì∑™ TEST RAPIDE DE L‚ÄôAPI
+###############################################################
+test-api:
+	@echo "$(CYAN)Test ‚Üí http://localhost:8080/api/health$(RESET)"
+	curl -s http://localhost:8080/api/health | jq
 
 
-# ----- D√©ploiement (Git + GitHub Actions) ------------------------------------
-
-.PHONY: deploy
+###############################################################
+# Ì∫Ä DEPLOIEMENT (Automatique via GitHub Actions)
+###############################################################
 deploy:
-	@echo "[deploy] Ajout des fichiers modifi√©s‚Ä¶"
-	@git add .
-	@echo "[deploy] Commit (laisse vide pour annuler)‚Ä¶"
-	@git commit -m "chore: update ecommerce api" || true
-	@echo "[deploy] Push sur $(BRANCH)‚Ä¶"
-	@git push origin $(BRANCH)
-	@echo "[deploy] Termin√©. GitHub Actions se charge du d√©ploiement sur le VPS."
-
+	@echo ""
+	@echo "$(GREEN)======================================================$(RESET)"
+	@echo "$(GREEN)     Ì∫Ä D√©ploiement via PUSH ‚Üí branche main            $(RESET)"
+	@echo "$(GREEN)======================================================$(RESET)"
+	@echo ""
+	@echo "$(CYAN)‚û°Ô∏è  Commit + push tes modifications :$(RESET)"
+	@echo "   git add ."
+	@echo "   git commit -m \"deploy\""
+	@echo "   git push origin main"
+	@echo ""
+	@echo "$(BLUE)Le VPS ex√©cutera automatiquement :$(RESET)"
+	@echo "   - copie des fichiers"
+	@echo "   - rebuild Docker"
+	@echo "   - red√©marrage API"
+	@echo ""
+	@echo "$(GREEN)Ìºç URL de production : http://$(VPS_HOST)$(RESET)"
