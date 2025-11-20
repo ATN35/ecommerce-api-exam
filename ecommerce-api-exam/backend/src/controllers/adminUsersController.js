@@ -5,7 +5,6 @@ async function deleteUser(req, res, next) {
   const userId = req.params.id;
 
   try {
-    // l’admin ne peut pas supprimer son propre compte
     if (req.user?.sub === userId) {
       return res.status(400).json({ error: 'cannot delete your own account' });
     }
