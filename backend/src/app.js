@@ -5,9 +5,13 @@ const { notFound, errorHandler } = require('./middlewares/error');
 const { initRedis } = require('./config/redis');
 const { pool } = require('./config/db');
 const cookieRoutes = require('./routes/cookie')
+const morgan = require("morgan");
 
 const app = express();
 app.use(express.json());
+if (process.env.NODE_ENV !== "test") {
+  app.use(morgan("combined"));
+}
 
 app.use('/api', require('./routes/admin'));
 app.use('/api/auth', require('./routes/auth'));
