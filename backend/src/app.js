@@ -4,9 +4,12 @@ const { security } = require('./middlewares/security');
 const { notFound, errorHandler } = require('./middlewares/error');
 const { initRedis } = require('./config/redis');
 const { pool } = require('./config/db');
-const cookieRoutes = require('./routes/cookie')
+const cookieRoutes = require('./routes/cookie');
 
 const app = express();
+
+app.set('trust proxy', 1);
+
 app.use(express.json());
 
 app.use('/api', require('./routes/admin'));
@@ -16,9 +19,11 @@ app.use('/api/cart', require('./routes/cart'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/health', require('./routes/health'));
 app.use('/api/rgpd', require('./routes/rgpd'));
-app.use('/api/cookie', cookieRoutes)
+app.use('/api/cookie', cookieRoutes);
 
-app.get('/', (_req, res) => res.json({ name: 'ecommerce-api', version: '1.0.0' }));
+app.get('/', (_req, res) =>
+  res.json({ name: 'ecommerce-api', version: '1.0.0' })
+);
 
 app.use(notFound);
 app.use(errorHandler);

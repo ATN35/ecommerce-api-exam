@@ -1,0 +1,73 @@
+{
+  "info": {
+    "_postman_id": "10a39496-ea3b-4443-9df4-472b18a9664d",
+    "name": "simple-api-todo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "35374385"
+  },
+  "item": [
+    {
+      "name": "/api/health",
+      "id": "00789aa3-4239-4c9b-bd3d-e85aa9ad826d",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "/api/health/db",
+      "id": "d7971b69-ed3e-4f5c-bb52-191de7828cff",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "/api/todos",
+      "id": "b813dac6-6c9c-45f6-8606-e91d89b2b82a",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "/api/todos",
+      "id": "1476ee6f-e475-419f-8125-ad4c182a0225",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "/api/todos/:id",
+      "id": "b42ddc15-dcc3-40b8-a320-397b06fba6ce",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "/api/todos/:id",
+      "id": "b6b83171-24a8-45e2-8ae3-2bdd696794ca",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "/api/todos/export.csv",
+      "id": "e9775bea-8352-4a88-974f-307c8c344206",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}

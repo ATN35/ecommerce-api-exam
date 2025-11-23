@@ -1,0 +1,46 @@
+{
+  "info": {
+    "_postman_id": "e5749e60-0ab7-43c6-804c-9cb6f105a38a",
+    "name": "Carnet Lecture API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "35374385"
+  },
+  "item": [
+    {
+      "name": "GET /api/books",
+      "id": "0a6932da-b8b7-4c10-87a4-1caaab386022",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "POST /api/register",
+      "id": "d6dde124-61a0-4b45-b7d2-45aea0b79d8b",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "POST /api/login",
+      "id": "7dd6032a-8a56-43e3-a787-cb2d3b52adfa",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "New Request",
+      "id": "27d6f45a-7af8-4208-a23c-3601549c80ff",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
