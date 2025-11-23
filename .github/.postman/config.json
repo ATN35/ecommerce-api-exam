@@ -1,0 +1,20 @@
+{
+  "workspace": {
+    "id": "ca843973-557b-4b29-85ca-3b5166dc7273"
+  },
+  "entities": {
+    "collections": [
+      "..\\postman\\collections\\simple-api-todo.postman_collection.json",
+      "..\\postman\\collections\\test-form.postman_collection.json",
+      "..\\postman\\collections\\Ecommerce API.postman_collection.json",
+      "..\\postman\\collections\\Ecommerce API VPS.postman_collection.json",
+      "..\\postman\\collections\\Lesage-Lelievre.postman_collection.json",
+      "..\\postman\\collections\\Carnet Lecture API.postman_collection.json",
+      "..\\postman\\collections\\Projet3.postman_collection.json"
+    ],
+    "environments": [],
+    "specs": [],
+    "flows": [],
+    "globals": []
+  }
+}

@@ -1,0 +1,1270 @@
+{
+  "info": {
+    "_postman_id": "73908203-9bbc-462e-b332-7256390a4cc7",
+    "name": "Ecommerce API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "35374385"
+  },
+  "item": [
+    {
+      "name": "Auth - Register",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "abc61278-14f9-4272-9279-2cef29866977",
+            "exec": [
+              "pm.test(\"Register 201\", () => pm.response.code === 201);\r",
+              "const b = pm.response.json();\r",
+              "pm.expect(b).to.have.property(\"id\");\r",
+              "pm.expect(b).to.have.property(\"email\");\r",
+              "pm.environment.set(\"user_id\", b.id);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "a0aeb65e-006d-4c4a-ab79-ea37d6abe09b",
+            "exec": [
+              "pm.environment.set(\"email\", `user_${Date.now()}@local.test`);\r",
+              "pm.environment.set(\"password\", \"user123\");\r",
+              "pm.request.headers.upsert({ key: \"Content-Type\", value: \"application/json\" });\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "afc7d34f-5e5b-4149-9377-890ed7909ada",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"email\": \"{{email}}\", \"password\": \"{{password}}\" }\r\n"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/register",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Auth - Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "76cf968e-fa79-4738-900e-883e68f857e4",
+            "exec": [
+              "pm.test(\"Login 200\", () => pm.response.code === 200);\r",
+              "const j = pm.response.json();\r",
+              "pm.expect(j).to.have.property(\"token\");\r",
+              "pm.environment.set(\"token\", j.token);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "f6a7a175-e8c4-422b-a2d5-d1797b009f4f",
+            "exec": [
+              "pm.request.headers.upsert({ key: \"Content-Type\", value: \"application/json\" });\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "3cb799fc-a5ed-4022-babc-333bf3a32198",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"email\": \"{{email}}\", \"password\": \"{{password}}\" }\r\n"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Auth - Me",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "0c9cc680-ebed-4d10-8553-5bcccc8b866e",
+            "exec": [
+              "pm.test(\"Me 200\", () => pm.response.code === 200);\r",
+              "const b = pm.response.json();\r",
+              "pm.expect(b).to.have.property(\"user\");\r",
+              "pm.expect(b.user).to.have.property(\"id\");\r",
+              "pm.expect(b.user).to.have.property(\"email\");\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "5aa0aef8-7094-4030-8dea-3e9bc84fbae0",
+            "exec": [
+              "pm.request.headers.upsert({ key: \"Authorization\", value: `Bearer ${pm.environment.get(\"token\")}` });\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "bc22a85a-4d76-4ffd-883b-cdfc1b0bd4a1",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "me"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Products - List",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "9c731b6e-0fe0-48bb-8b8a-84a741876a67",
+            "exec": [
+              "pm.test('Products 200', () => pm.response.code === 200);\r",
+              "const list = pm.response.json();\r",
+              "pm.expect(Array.isArray(list) && list.length > 0).to.be.true;\r",
+              "pm.environment.set('product_id', list[0].id);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "12dc9300-1f26-41ca-97ab-2828a9aa2293",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/products",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cart - Add",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "e3cf4d54-89f7-4507-bccc-40bc910bda23",
+            "exec": [
+              "pm.test(\"Cart add 201\", () => pm.response.code === 201);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "e4c061af-8737-41dd-9c14-a6ecae3fe3ad",
+            "exec": [
+              "pm.request.headers.upsert({ key: \"Content-Type\", value: \"application/json\" });\r",
+              "pm.request.headers.upsert({ key: \"Authorization\", value: `Bearer ${pm.environment.get(\"token\")}` });\r",
+              "pm.expect(pm.environment.get(\"product_id\"), \"product_id manquant (Products – List doit tourner avant)\").to.exist;\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "bcf78b05-5b22-4da8-b667-ac8fc08be091",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"product_id\": \"{{product_id}}\",\r\n  \"quantity\": 1\r\n}\r\n"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/cart/add",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "cart",
+            "add"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cart - Get",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "0277cb17-4d3e-4b12-b8ef-bd0b5916425f",
+            "exec": [
+              "pm.test(\"Cart 200\", () => pm.response.code === 200);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "0f6b95f7-9050-4e8e-a441-4693cb44ab31",
+            "exec": [
+              "pm.request.headers.upsert({ key: \"Authorization\", value: `Bearer ${pm.environment.get(\"token\")}` });\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "7963a352-6c43-4449-b37b-40b2191d2879",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cart",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "cart"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Orders - Create",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "b283d51e-9d57-4aa4-bc47-eef4cac65d70",
+            "exec": [
+              "pm.test(\"Order 201\", () => pm.response.code === 201);\r",
+              "let b = {};\r",
+              "try { b = pm.response.json(); } catch(e) {}\r",
+              "if (b.id) pm.environment.set(\"order_id\", b.id);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "cc2bdfa6-9e17-45b9-a579-9b23e46bf336",
+            "exec": [
+              "pm.request.headers.upsert({ key: \"Authorization\", value: `Bearer ${pm.environment.get(\"token\")}` });\r",
+              "pm.request.headers.upsert({ key: \"Content-Type\", value: \"application/json\" });\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "4a8feccc-cbad-4873-8987-e4b635e6db01",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/orders",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "orders"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RGPD - Consent",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "3573835a-e7f1-4f42-9017-72746f7ea867",
+            "exec": [
+              "pm.test(\"Consent 204\", () => pm.response.code === 204);\r",
+              "pm.environment.set(\"consent\", true);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "1c60d005-d075-4604-827c-aa223e2c9e74",
+            "exec": [
+              "pm.request.headers.upsert({ key: \"Authorization\", value: `Bearer ${pm.environment.get(\"token\")}` });\r",
+              "pm.request.headers.upsert({ key: \"Content-Type\", value: \"application/json\" });\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "393e78cc-c737-4f15-bb0d-d76d4903b454",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"consent\": true}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/rgpd/consent",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "rgpd",
+            "consent"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RGPD - Get Consent",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "6d8a10cc-fb03-4244-a92b-ba4099568417",
+            "exec": [
+              "pm.test(\"Get consent 200\", () => pm.response.code === 200);\r",
+              "const b = pm.response.json();\r",
+              "pm.expect(b).to.have.property(\"consent\");\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "269d5512-4432-4c68-954c-2f3b86cfed51",
+            "exec": [
+              "pm.request.headers.upsert({ key: \"Authorization\", value: `Bearer ${pm.environment.get(\"token\")}` });\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "4eef27fb-67f2-441f-b05e-eee396da4a2b",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/rgpd/consent",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "rgpd",
+            "consent"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RGPD - Cookies",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "e6028612-2add-4b15-bba6-a10c80c4aba0",
+            "exec": [
+              "pm.request.headers.upsert({ key: \"Authorization\", value: `Bearer ${pm.environment.get(\"token\")}` });\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "8d2f459a-8ef0-4f3f-a320-8aab64f0c2b0",
+            "exec": [
+              "pm.test(\"RGPD get consent 200\", () => pm.response.code === 200);\r",
+              "const b = pm.response.json();\r",
+              "pm.expect(b).to.have.property(\"consent\");\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "e50f8756-93df-45f8-ab94-9a42d23f9466",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"consent\": true}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/rgpd/consent",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "rgpd",
+            "consent"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cookie - Delete Account",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "6be8cb1b-89d3-44c8-93cf-867cec123209",
+            "exec": [
+              "pm.test(\"Delete 204\", () => pm.response.code === 204);\r",
+              "pm.environment.unset(\"token\");\r",
+              "pm.environment.unset(\"user_id\");\r",
+              "pm.environment.unset(\"email\");\r",
+              "pm.environment.unset(\"password\");\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "7b6e91ca-fcd1-4da4-b4eb-b73d89c99d22",
+            "exec": [
+              "pm.request.headers.upsert({ key: \"Authorization\", value: `Bearer ${pm.environment.get(\"token\")}` });\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "7c5d0f99-2a73-48f4-b3a7-19ff050a1da7",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cookie/delete-me\n",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "cookie",
+            "delete-me\n"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RGPD - Delete Account",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "9890a75d-9c0a-4b98-bf89-53cdda18c055",
+            "exec": [
+              "pm.request.headers.upsert({ key: \"Authorization\", value: `Bearer ${pm.environment.get(\"token\")}` });\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "528b1b21-9d07-4efd-8dcf-c829ec1b2c03",
+            "exec": [
+              "pm.test(\"RGPD delete 204\", () => pm.response.code === 204);\r",
+              "pm.environment.unset(\"token\");\r",
+              "pm.environment.unset(\"user_id\");\r",
+              "pm.environment.unset(\"email\");\r",
+              "pm.environment.unset(\"password\");\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "7d0db4b7-495b-45ee-b03f-cf2bf91ca6fe",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/rgpd/account",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "rgpd",
+            "account"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Health - Root",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "ba713f07-6130-4084-b283-5a22e580dd7e",
+            "exec": [
+              "pm.test(\"Health 200\", () => pm.response.code === 200);\r",
+              "const b = pm.response.json();\r",
+              "pm.expect(b).to.have.property(\"status\");\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "11091053-495b-44f6-827c-f0bff957cde7",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Health - DB",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "683158ed-57f8-44ea-b4b6-7a232ffa7722",
+            "exec": [
+              "pm.test(\"Health DB 200\", () => pm.response.code === 200);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "d414fccd-ceee-4018-adb3-5c4a46f6b1cc",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health/db",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "health",
+            "db"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Health - Redis",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "178149ef-9a63-4adc-8610-7a57e31024dd",
+            "exec": [
+              "pm.test(\"Health Redis 200\", () => pm.response.code === 200);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "d1e3480d-72fb-4147-acb2-66028aa61080",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health/redis",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "health",
+            "redis"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST Admin - Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "7b76c653-d981-4769-a257-618966445539",
+            "exec": [
+              "pm.test(\"Admin login 200\", function () {\r",
+              "  pm.expect(pm.response.code).to.eql(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Admin login retourne un token\", function () {\r",
+              "  const res = pm.response.json();\r",
+              "  pm.expect(res).to.have.property(\"token\");\r",
+              "  pm.environment.set(\"token_admin\", res.token);\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "904069d8-2c6a-4052-aa32-e61967e5a475",
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "cca4edf7-5d24-4984-80f8-c1f4b5b9ece5",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"admin@local.test\",\r\n  \"password\": \"admin123\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Admin - Me",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "739a620b-6e97-44a7-8df4-fcd2122b3b25",
+            "exec": [
+              "pm.test(\"Me 200\", () => pm.response.code === 200);\r",
+              "const res = pm.response.json();\r",
+              "pm.expect(res).to.have.property(\"user\");\r",
+              "pm.expect(res.user).to.have.property(\"role\");\r",
+              "pm.test(\"Role is admin\", () => res.user.role === \"admin\");\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "ff666def-06e9-4087-bf20-1ec4b1542eb9",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "me"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Admin - Users",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "2fd628c6-d567-4e05-831b-a6ed4db5c376",
+            "exec": [
+              "pm.test(\"Users 200\", () => pm.response.code === 200);\r",
+              "const list = pm.response.json();\r",
+              "pm.expect(Array.isArray(list)).to.be.true;\r",
+              "\r",
+              "const pick =\r",
+              "  list.find(u => (u.role || u.user_role || \"\").toLowerCase() === \"user\")\r",
+              "  || list.find(u => (u.email || \"\").toLowerCase() !== (pm.environment.get(\"admin_email\") || \"\").toLowerCase())\r",
+              "  || list[0];\r",
+              "\r",
+              "if (pick && pick.id) {\r",
+              "  pm.environment.set(\"user_id_any\", pick.id);\r",
+              "}\r",
+              "pm.test(\"Au moins un user récupéré\", () => !!pick);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "9782ffb7-4e25-4135-966f-0f9ff47e5060",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/users",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET Admin - Orders",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "45746862-52f8-453e-ac4b-ccb48521daa3",
+            "exec": [
+              "pm.test(\"Orders 200\", () => pm.response.code === 200);\r",
+              "const list = pm.response.json();\r",
+              "pm.expect(Array.isArray(list)).to.be.true;\r",
+              "\r",
+              "if (list.length > 0 && list[0].id) {\r",
+              "  pm.environment.set(\"order_id_any\", list[0].id);\r",
+              "}\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "0f906959-4529-402a-9702-06451f9bf4ba",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/orders\n",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "orders\n"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE Admin - Delete User",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "50489ac0-14f5-4cc5-861f-a8ef5e3a381e",
+            "exec": [
+              "pm.expect(pm.environment.get(\"user_id_any\"), \"user_id_any manquant\").to.exist;"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "049ff09a-1a09-460d-8ab1-c56fc9c30e20",
+            "exec": [
+              "pm.test(\"Delete user 204\", () => pm.response.code === 204);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "232d1666-ed71-4022-82b6-0f2f69b4996c",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/users/{{user_id_any}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "users",
+            "{{user_id_any}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST Admin - Add Product",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "057a1196-4a19-4950-b9b9-e4be25872de7",
+            "exec": [
+              "pm.test(\"Create product 201\", () => pm.response.code === 201);\r",
+              "const p = pm.response.json();\r",
+              "pm.expect(p).to.have.property(\"id\");\r",
+              "pm.environment.set(\"product_id_admin\", p.id);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "d1d9b45d-fbb8-47e9-b80c-a1d0cd344502",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Test product\",\r\n  \"description\": \"Created by Postman (admin)\",\r\n  \"price_cents\": 990,\r\n  \"stock\": 10\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/products",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PUT Admin - Update Product",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "41e67500-5cfa-4e37-a467-acd5a343890e",
+            "exec": [
+              "pm.test(\"Update product 200\", () => pm.response.code === 200);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "b868390a-ab62-457a-8c8b-6f46b34fefd2",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Test product (updated)\",\r\n  \"price_cents\": 1290,\r\n  \"stock\": 25\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/products/{{product_id_admin}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "products",
+            "{{product_id_admin}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE Admin - Delete Product",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "id": "90c166f3-1d3f-4119-8b14-834f71e26c48",
+            "exec": [
+              "pm.test(\"Delete product 204\", () => pm.response.code === 204);\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "id": "5459eefd-1dca-4bc3-abb2-a4e01c593224",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_admin}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/products/{{product_id}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "products",
+            "{{product_id}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "id": "c7d1dc41-5fb6-4092-b615-185f43d71cda",
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "id": "8537abbd-8ca1-4987-98ea-928b47712bd1",
+      "key": "token",
+      "value": ""
+    }
+  ]
+}
