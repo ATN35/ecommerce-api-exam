@@ -1,100 +1,196 @@
-#  API e-Commerce – Projet d’Examen DWWM
-API sécurisée permettant la gestion complète d’un système e-commerce : utilisateurs, administrateurs, produits, commandes, authentification, base de données persistante et déploiement VPS via Docker & Nginx.
+# 🚀 API e-Commerce – Projet d’Examen DWWM
+
+API e-commerce moderne, sécurisée, performante et déployée de manière professionnelle via Docker, Nginx et GitHub Actions. Projet complet démontrant l’ensemble des compétences attendues du Titre Professionnel **Développeur Web & Web Mobile (DWWM)**.
 
 ---
 
-##  Objectif du projet
-Réaliser une API professionnelle conforme aux compétences du titre DWWM :
-- Backend structuré avec architecture MVC  
-- Authentification sécurisée (JWT, Bcrypt)  
-- Gestion des rôles (user/admin)  
-- CRUD complet sur les produits  
-- Création et gestion des commandes  
-- Base de données SQL persistante  
-- Déploiement sécurisé (Docker, Nginx, HTTPS, VPS)
+## 🌈 Badges Colorés
+
+![NodeJS](https://img.shields.io/badge/Node.js-3C873A?style=for-the-badge\&logo=nodedotjs\&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge\&logo=express\&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-31648C?style=for-the-badge\&logo=postgresql\&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-D9281A?style=for-the-badge\&logo=redis\&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge\&logo=docker\&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge\&logo=nginx\&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge\&logo=jsonwebtokens)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge\&logo=githubactions\&logoColor=white)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge\&logo=ubuntu\&logoColor=white)
 
 ---
 
-##  Stack Technique
-- **Node.js / Express.js**
-- **PostgreSQL** (volume Docker persistant)
-- **JWT, Bcrypt, CORS, Helmet**
-- **Docker & Docker Compose**
-- **Nginx** (reverse proxy + TLS)
-- **Ubuntu 22.04 sur VPS**
+# 🎯 Objectif du Projet
+
+Créer une **API REST professionnelle**, conforme aux exigences DWWM :
+
+* Architecture **MVC** claire et scalable
+* Authentification sécurisée (**JWT**, **Bcrypt**)
+* Gestion des rôles (**user/admin**)
+* CRUD complet (produits, commandes)
+* Base de données **PostgreSQL persistante**
+* Cache & panier avec **Redis**
+* Déploiement **VPS + Docker + Nginx + HTTPS**
+* Pipeline **CI/CD avec GitHub Actions**
+* Sécurité API et bonnes pratiques DevOps
 
 ---
 
-##  Architecture MVC
+# 🧩 Stack Technique
+
+## Backend
+
+* Node.js
+* Express.js
+* JWT
+* Bcrypt
+* Cookie-parser
+* CORS
+* Helmet
+
+## Base SQL
+
+* PostgreSQL
+* Extensions : `uuid-ossp`, `pgcrypto`
+* MCD / MLD / MPD
+
+## Système & Infra
+
+* Docker
+* Docker Compose
+* Redis
+* Nginx (Reverse Proxy + HTTPS)
+* Certbot / Let’s Encrypt
+* GitHub Actions (CI/CD)
+* VPS Ubuntu 22.04
+
+---
+
+# 🏗 Architecture MVC
+
+```
 /src
-
 ├── controllers
-
 ├── models
-
 ├── routes
-
 ├── middlewares
-
 └── utils
+```
 
 ---
 
-##  Étapes de création du projet
+# 📊 Diagramme d’Architecture (Mermaid)
 
-### 1️⃣ Initialisation du backend
-- Création d’un projet Express propre  
-- Mise en place de la structure MVC  
-- Configuration de Docker  
-- Configuration de docker-compose avec :
-  - service API  
-  - service PostgreSQL  
-  - volume pour la persistance des données
-
----
-
-### 2️⃣ Système d’authentification sécurisé
-- Inscription avec hachage **Bcrypt**  
-- Connexion générant un **JWT**  
-- Middleware pour valider les tokens  
-- Système de rôle : utilisateur / administrateur
+```mermaid
+flowchart LR
+    User((Client)) -->|HTTPS| Nginx
+    Nginx --> API[API Node.js / Express]
+    API --> PG[(PostgreSQL)]
+    API --> Redis[(Redis)]
+    PG --> Volume[(Docker Volume - Persistant)]
+```
 
 ---
 
-### 3️⃣ Gestion des produits (CRUD)
-- **Admin :** créer, modifier, supprimer  
-- **Utilisateur :** consulter les produits  
-- Vérification du token pour les opérations sensibles  
+# 🛠️ Étapes de Construction du Projet
+
+## 1️⃣ Initialisation du Backend
+
+* Création du projet Express
+* Architecture MVC
+* Variables d’environnement `.env`
+* Services Docker : API / PostgreSQL / Redis
+
+## 2️⃣ Authentification Sécurisée
+
+* Inscription → hash **Bcrypt**
+* Connexion → **JWT signé**
+* Cookies sécurisés : HTTPOnly, SameSite, Secure
+* Middleware de validation JWT
+* Rôle utilisateur : `user` / `admin`
+
+## 3️⃣ CRUD Produits
+
+* Lecture publique
+* Création / modification / suppression pour admin
+
+## 4️⃣ Commandes
+
+* Création de commandes
+* Association produits ↔ commandes
+* Décrémentation du stock
+
+## 5️⃣ Redis (Panier)
+
+* Stockage du panier
+* Calcul du total
+* Optimisation performance
 
 ---
 
-### 4️⃣ Gestion des commandes
-- Création de commande par utilisateur  
-- Vérification des droits et de l’authentification  
-- Association des commandes avec les produits  
+# 🐳 Docker & Infrastructure
+
+## Services Docker
+
+* API Node.js
+* PostgreSQL (volume persistant)
+* Redis
+* Réseau interne Docker
+
+## Nginx
+
+* Reverse Proxy
+* HTTPS avec Let’s Encrypt
+* Redirection vers API interne
 
 ---
 
-### 5️⃣ Déploiement sur VPS Ubuntu
-- Clonage du projet sur le serveur  
-- Installation de Docker + Docker Compose  
-- Mise en place d’un **Nginx reverse proxy**  
-- Activation du HTTPS  
-- API servie derrière Nginx sur port 443  
-- Base PostgreSQL persistante via volume Docker  
+# 🌐 Déploiement VPS Ubuntu
+
+* Installation Docker & Docker Compose
+* Clonage du projet
+* Configuration Nginx
+* Certificats HTTPS
+* Mise en production via :
+
+```
+docker compose up -d --build
+```
 
 ---
 
-## ✔️ Résultat final
-Une API e-commerce **sécurisée, modulaire, documentée et déployée**, prête pour un usage réel et conforme aux attentes du jury DWWM :  
-- Authentification complète  
-- Gestion des données fiable  
-- Architecture professionnelle  
-- Sécurité renforcée  
-- Déploiement automatisable  
+# ⚡ CI/CD – GitHub Actions
+
+## Pipeline visuel
+
+```mermaid
+flowchart TD
+    Code[Commit / Push] --> Actions[GitHub Actions]
+    Actions --> Build(Build Docker)
+    Actions --> Tests(Contrôles & Lint)
+    Actions --> SSH[Déploiement SSH]
+    SSH --> VPS(VPS Ubuntu)
+    VPS --> Reload(Docker Compose Restart)
+```
+
+## Badge CI/CD (une fois le workflow créé)
+
+```
+![CI/CD](https://github.com/ATN35/ecommerce-api-exam/actions/workflows/deploy.yml/badge.svg)
+```
 
 ---
 
-###  Auteur
-**Antoine Lelièvre** – Développeur Web & Web Mobile  
+# ✔️ Résultat Final
 
+* API **sécurisée** (JWT, rôles, cookies protégés)
+* Architecture **modulaire** (MVC)
+* Système **scalable** (Docker, Redis, Nginx)
+* Données **persistantes** (PostgreSQL)
+* Pipeline **CI/CD** automatisé
+* Déploiement **professionnel** sur VPS
+* Conforme **DWWM**
+
+---
+
+# 👤 Auteur
+
+**Antoine Lelièvre** – Développeur Web & Web Mobile
